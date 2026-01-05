@@ -8,5 +8,8 @@
   },
   "author": "Ravi Raj",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
 }
