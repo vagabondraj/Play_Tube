@@ -1,14 +1,15 @@
 import asyncHandler from "express-async-handler";
 import ApiError from "../utils/ApiError.js";
-import User from "../models/user.models.js";
+import { User} from "../models/user.models.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import ApiResponse from "../utils/ApiResponse..js";
 
 
 const registerUser = asyncHandler(async (req, res) => {
-    const{username, email, password, fullName} = req.body;
+    const{username, email, password, fullname} = req.body;
     console.log("username", username);
     
-    if(!username || !email || !password || !fullName){
+    if(!username || !email || !password || !fullname){
         throw new ApiError(400, "All fields are required");
     }
     // to validate email format
@@ -38,7 +39,25 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(500, "Failed to upload avatar");
     }
 
-    
+    const user = await User.create({
+        fullname,
+        email,
+        password,
+        avatar: avatar.url,
+        coverImage: coverImage?.url || "",
+        username: username.toLowerCase(),
+    });
+
+    const createdUser = await User.findById(user._id).select("-password -refreshTokens");
+
+    if(!createdUser){
+        throw new ApiError(500, "Failed to create user");
+    }
+
+    return res.status(201).json(
+        new ApiResponse(201, createdUser, "User registered successfully")
+    );
+
 });
 
 export {registerUser};

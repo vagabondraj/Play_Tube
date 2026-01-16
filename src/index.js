@@ -1,12 +1,12 @@
 
 import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
 import app from "./app.js";
 import { mongo } from "mongoose";
-import { APP_NAME } from "./constants.js";
 import connectToDatabase from "./db/index.js";
+import { APP_NAME } from "./constants.js";
 
  
-dotenv.config({ path: "./.env" });
 connectToDatabase()
 .then(() => {
     app.listen(process.env.PORT || 8000, () => {
@@ -19,7 +19,6 @@ connectToDatabase()
 .catch((err) => {
     console.error("Failed to connect to MongoDB !!!", err);
 });
-
 
 
 

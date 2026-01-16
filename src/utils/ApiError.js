@@ -7,10 +7,10 @@ class ApiError extends Error {
     ) {
         super(message);
         this.statusCode = statusCode;
-        this.data = null,
+        this.data = null;
         this.message = message;
         this.success = false;
-        this.errors = errors;
+        this.errors = error;
         if (stack) {
             this.stack = stack;
         }else{
@@ -19,4 +19,4 @@ class ApiError extends Error {
     }
 }
 
-export {ApiError};
+export default ApiError;
