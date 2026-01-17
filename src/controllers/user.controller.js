@@ -187,5 +187,59 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 });
 
-export {registerUser, loginUser, LogoutUser, refreshAccessToken};
+const ChangeCurrentUserPassword = asyncHandler(async (req, res) => {
+    // Implementation for changing current user's password
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    const user = await User.findById(req.user?._id);
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
+
+    const isPasswordValid = await user.isPasswordMatch(currentPassword);
+
+    if(!isPasswordValid){
+        throw new ApiError(401, "Current password is incorrect");
+    }
+
+    if(newPassword !== confirmPassword){
+        throw new ApiError(400, "New password and confirm password do not match");
+    }
+    user.password = newPassword;
+    await user.save({validateBeforeSave: false});
+
+    return res.status(200).json(new ApiResponse(200, {}, "Password changed successfully"));
+});
+
+const getCurrentUser = asyncHandler(async (req, res) =>{
+    return res.status(200).json(200, req.user, "Current user fetched succesfully")
+})
+
+const UpdateAccontDetails = asyncHandler(async (req,res) =>{
+    const {fullName, email} = req.body;
+
+    if(!fullName||!email){
+        throw new ApiError(401, "You are not registered user")
+    }
+
+    const user = await User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set:{
+                fullName,
+                email : email
+            }
+        },
+        {new: true},
+
+    ).select("-password")
+}) 
+
+export {registerUser,
+    loginUser,
+    LogoutUser,
+    refreshAccessToken,
+    ChangeCurrentUserPassword,
+    getCurrentUser
+};
 
