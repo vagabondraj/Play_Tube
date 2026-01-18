@@ -6,11 +6,12 @@ const deleteFromCloudinary = async(imageUrl) => {
 
         const publicId = imageUrl
         .split("/")
-        .slice(-2)
+        .slice(imageUrl.split("/").indexOf("upload") + 2)
         .join("/")
         .split(".")[0];
 
-        await cloudinary.uploader.destroy(publicId);
+        const result = await cloudinary.uploader.destroy(publicId);
+        console.log("Cloudinary delete:", result);
     }catch(error){
         console.log("Cloudinary upload error:",error.message);
     }

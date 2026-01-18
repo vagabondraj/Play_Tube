@@ -256,7 +256,12 @@ const UpdateUserAvatar = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Avatar is missing");
       }
 
-      const oldAvatar = await User.findById(req.user?._id).select("avatar");
+      const user = await User.findById(req.user._id);
+      if(!user){
+        throw new ApiError(404, "user not found");
+      }
+
+      const oldAvatarUrl = user.avatar;
 
       const avatar = await uploadOnCloudinary(avatarLocalPath);
 
@@ -264,19 +269,12 @@ const UpdateUserAvatar = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Error while uploading avatar");
       }
 
-      const user = await User.findByIdAndUpdate(
-        req.user?._id,
-        {
-            $set:{
-                avatar: avatar.url
-            }
-        },
-        {new: true}
-      ).select("-password")
-
-      if(oldAvatar?.avatar){
-        await deleteFromCloudinary(oldAvatar.avatar);
+      if(oldAvatarUrl){
+        await deleteFromCloudinary(oldAvatarUrl);
       }
+
+      user.avatar = avatar.url;
+      await user.save({validateBeforeSave:false});
 
       return res
       .status(200)
@@ -292,7 +290,12 @@ const UpdateUserCoverImage = asyncHandler(async (req, res) => {
         throw new ApiError(400, "CoverImage not found");
     }
 
-    const oldCoverImage = await User.findById(req.user?._id).select("coverImage");
+    const user = await User.findById(req.user._id);
+    if(!user){
+        throw new ApiError(404, "User not found");
+    }
+
+    const oldCoverImageUrl = user.coverImage;
 
     const coverImage = await uploadOnCloudinary(coverImageLocalPath);
 
@@ -300,19 +303,12 @@ const UpdateUserCoverImage = asyncHandler(async (req, res) => {
         throw new ApiError(401, "Error while uploding cover Image");
     }
     
-    const user = await User.findByIdAndUpdate(
-        req.user._id,
-        {
-            $set:{
-                coverImage: coverImage.url
-            }
-        },
-        {new : true}
-    ).select("-password")
-
-    if(oldCoverImage?.coverImage){
-        await deleteFromCloudinary(oldCoverImage.coverImage);
+    if(oldCoverImageUrl){
+        await deleteFromCloudinary(oldCoverImageUrl);
     }
+
+    user.coverImage = coverImage.url;
+    await user.save({validateBeforeSave:false});
 
     return res
     .status(200)
