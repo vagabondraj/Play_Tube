@@ -37,7 +37,7 @@ router.route("/login").post(
 
 
 router.route("/logout").post(
-    verifyJWT,
+    verifyJWT, 
     LogoutUser
 );
 
@@ -45,13 +45,13 @@ router.route("/refresh-token").post(verifyJWT,refreshAccessToken);
 
 router.route("/change-password").post(verifyJWT, ChangeCurrentUserPassword);
 
-router.route("-current-user").post(verifyJWT, getCurrentUser);
+router.route("/current-user").post(verifyJWT, getCurrentUser);
 
-router.route("update-account-detail").post(verifyJWT, UpdateAccontDetails);
+router.route("/update-account-detail").post(verifyJWT, UpdateAccontDetails);
 
-router.route("/avatar").post(verifyJWT, upload.single("avatar"), UpdateUserAvatar);
+router.route("/update-avatar").post(verifyJWT, upload.single("avatar"), UpdateUserAvatar);
 
-router.route("update-coverImage").post(verifyJWT, upload.single("coverImage"), UpdateUserCoverImage);
+router.route("/update-coverImage").post(verifyJWT, upload.single("coverImage"), UpdateUserCoverImage);
 
 router.route("/c/:username").get(verifyJWT, getUserChannelProfile);
 
