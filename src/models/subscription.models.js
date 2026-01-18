@@ -13,4 +13,4 @@ const subscriptionSchema = new Schema({
 
 
 
-const Subscription = mongoose.model("subscription", subscriptionSchema);
+const Subscription = mongoose.model("Subscription", subscriptionSchema);
